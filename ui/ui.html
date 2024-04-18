@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css"
+        type="text/css">
+    <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+    <link rel="stylesheet" href="./ui.css">
+    <title>Accident Prediction</title>
+</head>
+<body>
+    
+    <button id="myBtn">Open Modal</button>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="inputForm">
+                <p><label>Age of the driver:</label> <input type="number" id="age_driver"/></p>
+                <p><label>Age of the vehicle:</label> <input type="number" id="age_vehicle"/></p>
+                <p><label>Engine Capacity:</label> <input type="number" id="engine_cap"/></p>
+                <p><label>Gender:</label> <select id="gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                </p>
+                <p><label>Vehicle Type:</label> <select id="vehicle_type">
+                        <option value="car">Car</option>
+                        <option value="bike">Bike</option>
+                        <option value="bike">Bus</option>
+                    </select>
+                </p>
+                <input id="submitBtn" type="submit"/>
+            </form>
+        </div>
+    </div>
+
+    <div id="map"></div>
+    <div id="msg">Click to add a point.</div>
+
+    <script src="./ui.js" type="module"></script>
+</body>
+</html>

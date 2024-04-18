@@ -1,0 +1,83 @@
+html,body,#map { width:100%; height:100%; margin:0; }
+#map {
+    position: absolute;
+    z-index: 5;
+}
+#msg, #myBtn{
+    position: absolute;
+    z-index: 10;
+    left: 50%;
+    transform: translate(-50%, 5px);
+    background-color: rgba(40,40,40,.8);
+    padding: 10px;
+    color: #eee;
+    width: 350px;
+    text-align: center;
+}
+.ol-control button{ 
+  background-color: rgba(40, 40, 40, 0.85) !important;
+}
+.ol-control button:hover{ 
+  background-color: rgba(40, 40, 40, 1) !important;
+}
+#myBtn{
+  left: 90%;
+  width: 100px;
+}
+
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 30%;
+  border-radius: 30px;
+}
+
+.modal-content span {
+  align-self: flex-end;
+}
+
+#inputForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#submitBtn {
+  background-color: rgba(40, 40, 40, .8);
+  padding: 10px;
+  color: #eee;
+  width: 100px;
+  text-align: center;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
