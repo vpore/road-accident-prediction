@@ -11,129 +11,129 @@ from sklearn.preprocessing import LabelEncoder
 accident_data = pd.read_csv('dataset/Accident_Information.csv')
 vehicle_data = pd.read_csv('dataset/Vehicle_Information.csv')
 
-# # ---- Data Preprocessing - Accident Data ----
+# ---- Data Preprocessing - Accident Data ----
 
-# accident_data.columns = accident_data.columns.str.strip()
-# # print(accident_data.head())
-# # print(accident_data.info())
-# # print(accident_data.describe())
+accident_data.columns = accident_data.columns.str.strip()
+# print(accident_data.head())
+# print(accident_data.info())
+# print(accident_data.describe())
 
-# # Drop irrelevant columns
-# irrelavant_columns = ['1st_Road_Class', '1st_Road_Number', '2nd_Road_Class', '2nd_Road_Number', 'Date', 'Did_Police_Officer_Attend_Scene_of_Accident', 'Local_Authority_(District)', 'Local_Authority_(Highway)', 'Location_Easting_OSGR', 'Location_Northing_OSGR', 'LSOA_of_Accident_Location', 'Pedestrian_Crossing-Human_Control', 'Pedestrian_Crossing-Physical_Facilities', 'Police_Force', 'Year','InScotland']
-# accident_data = accident_data.drop(irrelavant_columns, axis=1)
-# num_duplicates = accident_data['Accident_Index'].duplicated().sum()
-# # print('Duplicate Accident Data Entries - ', num_duplicates)
-# accident_data = accident_data.drop_duplicates(subset='Accident_Index', keep='first')
+# Drop irrelevant columns
+irrelavant_columns = ['1st_Road_Class', '1st_Road_Number', '2nd_Road_Class', '2nd_Road_Number', 'Date', 'Did_Police_Officer_Attend_Scene_of_Accident', 'Local_Authority_(District)', 'Local_Authority_(Highway)', 'Location_Easting_OSGR', 'Location_Northing_OSGR', 'LSOA_of_Accident_Location', 'Pedestrian_Crossing-Human_Control', 'Pedestrian_Crossing-Physical_Facilities', 'Police_Force', 'Year','InScotland']
+accident_data = accident_data.drop(irrelavant_columns, axis=1)
+num_duplicates = accident_data['Accident_Index'].duplicated().sum()
+# print('Duplicate Accident Data Entries - ', num_duplicates)
+accident_data = accident_data.drop_duplicates(subset='Accident_Index', keep='first')
 
-# # Simplify certain columns
-# def simplify(description):
-#     if 'darkness' in description.lower():
-#         return 'Darkness'
-#     elif 'ice' in description.lower():
-#         return 'Snow'    
-#     else:
-#         return description
+# Simplify certain columns
+def simplify(description):
+    if 'darkness' in description.lower():
+        return 'Darkness'
+    elif 'ice' in description.lower():
+        return 'Snow'    
+    else:
+        return description
 
-# def simplify_road(description):
-#     if 'dry' in description.lower():
-#         return 'dry'
-#     else:
-#         return 'wet'
+def simplify_road(description):
+    if 'dry' in description.lower():
+        return 'dry'
+    else:
+        return 'wet'
 
-# def simplify_weather(description):
-#     if 'raining' in description.lower():
-#         return 'rain'
-#     elif 'fog' in description.lower():
-#         return 'rain'
-#     elif 'snowing' in description.lower():
-#         return 'snow'
-#     elif 'unknown' in description.lower():
-#         return 'fine'
-#     elif 'fine' in description.lower():
-#         return 'fine'
-#     else:
-#         return description
+def simplify_weather(description):
+    if 'raining' in description.lower():
+        return 'rain'
+    elif 'fog' in description.lower():
+        return 'rain'
+    elif 'snowing' in description.lower():
+        return 'snow'
+    elif 'unknown' in description.lower():
+        return 'fine'
+    elif 'fine' in description.lower():
+        return 'fine'
+    else:
+        return description
 
-# accident_data['Weather_Conditions'] = accident_data['Weather_Conditions'].apply(simplify_weather)
-# accident_data['Light_Conditions'] = accident_data['Light_Conditions'].apply(simplify)
-# accident_data['Road_Surface_Conditions'] = accident_data['Road_Surface_Conditions'].apply(simplify)
-# accident_data['Road_Surface_Conditions'] = accident_data['Road_Surface_Conditions'].apply(simplify_road)
-# # accident_data['Weather_Conditions'] = accident_data['Weather_Conditions'].apply(simplify)
+accident_data['Weather_Conditions'] = accident_data['Weather_Conditions'].apply(simplify_weather)
+accident_data['Light_Conditions'] = accident_data['Light_Conditions'].apply(simplify)
+accident_data['Road_Surface_Conditions'] = accident_data['Road_Surface_Conditions'].apply(simplify)
+accident_data['Road_Surface_Conditions'] = accident_data['Road_Surface_Conditions'].apply(simplify_road)
+# accident_data['Weather_Conditions'] = accident_data['Weather_Conditions'].apply(simplify)
 
-# # Replace the empty data with NaN
-# accident_data.replace("", float("NaN"), inplace=True)
-# accident_data.replace(" ", float("NaN"), inplace=True)
-# accident_data.replace("Data missing or out of range", float("NaN"), inplace=True)
-# accident_data.replace("Other junction", float("NaN"), inplace=True)
-# accident_data.replace("Other", float("NaN"), inplace=True)
+# Replace the empty data with NaN
+accident_data.replace("", float("NaN"), inplace=True)
+accident_data.replace(" ", float("NaN"), inplace=True)
+accident_data.replace("Data missing or out of range", float("NaN"), inplace=True)
+accident_data.replace("Other junction", float("NaN"), inplace=True)
+accident_data.replace("Other", float("NaN"), inplace=True)
 
-# # Count missing value of each columns
-# count_missing_value = accident_data.isna().sum() / accident_data.shape[0] * 100
-# count_missing_value_df = pd.DataFrame(count_missing_value.sort_values(ascending=False), columns=['Missing%'])
+# Count missing value of each columns
+count_missing_value = accident_data.isna().sum() / accident_data.shape[0] * 100
+count_missing_value_df = pd.DataFrame(count_missing_value.sort_values(ascending=False), columns=['Missing%'])
 
-# # Visualize the percentage of Missing value in each column
-# missing_value_df = count_missing_value_df[count_missing_value_df['Missing%'] > 0]
-# plt.figure(figsize=(15, 10))
-# missing_value_graph = sns.barplot(y = missing_value_df.index, x = "Missing%", data=missing_value_df, orient="h")
-# missing_value_graph.set_title("Percentage Missing value of each feature", fontsize = 20)
-# missing_value_graph.set_ylabel("Features")
-# # plt.show()
+# Visualize the percentage of Missing value in each column
+missing_value_df = count_missing_value_df[count_missing_value_df['Missing%'] > 0]
+plt.figure(figsize=(15, 10))
+missing_value_graph = sns.barplot(y = missing_value_df.index, x = "Missing%", data=missing_value_df, orient="h")
+missing_value_graph.set_title("Percentage Missing value of each feature", fontsize = 20)
+missing_value_graph.set_ylabel("Features")
+# plt.show()
 
-# # print('\nMissing values %\n', count_missing_value_df.head(10))
+# print('\nMissing values %\n', count_missing_value_df.head(10))
 
-# # Drop columns with greater % of missing values
-# missing_value_40_df = count_missing_value_df[count_missing_value_df['Missing%'] > 40]
-# accident_data.drop(missing_value_40_df.index, axis=1, inplace=True)
+# Drop columns with greater % of missing values
+missing_value_40_df = count_missing_value_df[count_missing_value_df['Missing%'] > 40]
+accident_data.drop(missing_value_40_df.index, axis=1, inplace=True)
 
-# fig, axes = plt.subplots(2, 2, figsize=(8, 6))
+fig, axes = plt.subplots(2, 2, figsize=(8, 6))
 
-# # Imputation by max value count
-# accident_data['Junction_Control'].replace(float("NaN"), "Give way or uncontrolled", inplace=True)
-# accident_data['Junction_Control'].replace("Stop sign", "Give way or uncontrolled", inplace=True)
-# accident_data['Junction_Control'].replace("Authorised person", "Give way or uncontrolled", inplace=True)
-# jc_counts = accident_data['Junction_Control'].value_counts()
-# axes[0,0].bar(jc_counts.index, jc_counts)
-# axes[0,0].set_title('Junction Control')
+# Imputation by max value count
+accident_data['Junction_Control'].replace(float("NaN"), "Give way or uncontrolled", inplace=True)
+accident_data['Junction_Control'].replace("Stop sign", "Give way or uncontrolled", inplace=True)
+accident_data['Junction_Control'].replace("Authorised person", "Give way or uncontrolled", inplace=True)
+jc_counts = accident_data['Junction_Control'].value_counts()
+axes[0,0].bar(jc_counts.index, jc_counts)
+axes[0,0].set_title('Junction Control')
 
-# wc_counts = accident_data['Weather_Conditions'].value_counts()
-# axes[0,1].bar(wc_counts.index, wc_counts)
-# axes[0,1].set_title('Weather Conditions')
-# accident_data['Weather_Conditions'].replace(float("NaN"), "fine", inplace=True)
+wc_counts = accident_data['Weather_Conditions'].value_counts()
+axes[0,1].bar(wc_counts.index, wc_counts)
+axes[0,1].set_title('Weather Conditions')
+accident_data['Weather_Conditions'].replace(float("NaN"), "fine", inplace=True)
 
-# accident_data['Junction_Detail'] = accident_data['Junction_Detail'].fillna(accident_data['Junction_Detail'].mode()[0])
-# accident_data['Junction_Detail'].replace("Mini-roundabout", "Roundabout", inplace=True)
-# accident_data['Junction_Detail'].replace("More than 4 arms (not roundabout)", "Crossroads", inplace=True)
-# accident_data['Junction_Detail'].replace("Private drive or entrance", "Slip road", inplace=True)
-# accident_data['Junction_Detail'].replace("T or staggered junction", "Crossroads", inplace=True)
-# jd_counts = accident_data['Junction_Detail'].value_counts()
-# axes[1,0].bar(jd_counts.index, jd_counts)
-# axes[1,0].set_title('Junction Detail')
+accident_data['Junction_Detail'] = accident_data['Junction_Detail'].fillna(accident_data['Junction_Detail'].mode()[0])
+accident_data['Junction_Detail'].replace("Mini-roundabout", "Roundabout", inplace=True)
+accident_data['Junction_Detail'].replace("More than 4 arms (not roundabout)", "Crossroads", inplace=True)
+accident_data['Junction_Detail'].replace("Private drive or entrance", "Slip road", inplace=True)
+accident_data['Junction_Detail'].replace("T or staggered junction", "Crossroads", inplace=True)
+jd_counts = accident_data['Junction_Detail'].value_counts()
+axes[1,0].bar(jd_counts.index, jd_counts)
+axes[1,0].set_title('Junction Detail')
 
-# rsc_counts = accident_data['Road_Surface_Conditions'].value_counts()
-# axes[1,1].bar(rsc_counts.index, rsc_counts)
-# axes[1,1].set_title('Road Surface Conditions')
-# accident_data['Road_Surface_Conditions'].replace(float("NaN"), "dry", inplace=True)
+rsc_counts = accident_data['Road_Surface_Conditions'].value_counts()
+axes[1,1].bar(rsc_counts.index, rsc_counts)
+axes[1,1].set_title('Road Surface Conditions')
+accident_data['Road_Surface_Conditions'].replace(float("NaN"), "dry", inplace=True)
 
-# accident_data['Road_Type'].replace("Unknown", "Single carriageway", inplace=True)
-# accident_data['Road_Type'].replace("One way street", "Single carriageway", inplace=True)
-# accident_data['Road_Type'].replace("Slip road", "Single carriageway", inplace=True)
-# rt_counts = accident_data['Road_Type'].value_counts()
+accident_data['Road_Type'].replace("Unknown", "Single carriageway", inplace=True)
+accident_data['Road_Type'].replace("One way street", "Single carriageway", inplace=True)
+accident_data['Road_Type'].replace("Slip road", "Single carriageway", inplace=True)
+rt_counts = accident_data['Road_Type'].value_counts()
 
-# plt.tight_layout()
-# # plt.show()
+plt.tight_layout()
+# plt.show()
 
-# # Imputation by corresponding class Mean value
-# accident_data['Latitude'] = accident_data['Latitude'].fillna(accident_data['Latitude'].mean())
-# accident_data['Longitude'] = accident_data['Longitude'].fillna(accident_data['Longitude'].mean())
+# Imputation by corresponding class Mean value
+accident_data['Latitude'] = accident_data['Latitude'].fillna(accident_data['Latitude'].mean())
+accident_data['Longitude'] = accident_data['Longitude'].fillna(accident_data['Longitude'].mean())
 
-# count_missing_value = accident_data.isna().sum() / accident_data.shape[0] * 100
-# count_missing_value_df = pd.DataFrame(count_missing_value.sort_values(ascending=False), columns=['Missing%'])
-# # print('\nMissing values %\n', count_missing_value_df.head(5))
+count_missing_value = accident_data.isna().sum() / accident_data.shape[0] * 100
+count_missing_value_df = pd.DataFrame(count_missing_value.sort_values(ascending=False), columns=['Missing%'])
+# print('\nMissing values %\n', count_missing_value_df.head(5))
 
-# # Datatype correcting
-# accident_data['Time'] = pd.to_datetime(accident_data['Time'],format='%H:%M').dt.hour
+# Datatype correcting
+accident_data['Time'] = pd.to_datetime(accident_data['Time'],format='%H:%M').dt.hour
 
-# # accident_data.to_csv('pp-acc-data.csv')
+# accident_data.to_csv('pp-acc-data.csv')
 
 # ---- Data Preprocessing - Vehicle Data ----
 
@@ -300,85 +300,85 @@ final = df.drop(amb_cols, axis=1)
 
 
 
-# # ---- EDA - Accident Data ----
+# ---- EDA - Accident Data ----
 
-# data = pd.read_csv('pp-data.csv')
+data = pd.read_csv('pp-data.csv')
 
-# # Severity proportion
-# severity_counts = data["Accident_Severity"].value_counts()
-# severity_percentage = (severity_counts / severity_counts.sum()) * 100
-# plt.figure(figsize=(12, 6))
-# plt.bar(severity_counts.index, severity_counts)
-# plt.xlabel('Severity')
-# plt.ylabel('Counts')
-# plt.title('The distribution of accidents severity')
-# legend_labels = [f'{label} ({percentage:.2f}%)' for label, percentage in zip(severity_counts.index, severity_percentage)]
-# plt.legend(legend_labels, title='Severity', loc='upper right')
-# # plt.show()
+# Severity proportion
+severity_counts = data["Accident_Severity"].value_counts()
+severity_percentage = (severity_counts / severity_counts.sum()) * 100
+plt.figure(figsize=(12, 6))
+plt.bar(severity_counts.index, severity_counts)
+plt.xlabel('Severity')
+plt.ylabel('Counts')
+plt.title('The distribution of accidents severity')
+legend_labels = [f'{label} ({percentage:.2f}%)' for label, percentage in zip(severity_counts.index, severity_percentage)]
+plt.legend(legend_labels, title='Severity', loc='upper right')
+# plt.show()
 
-# # Mean speed limit of each severity
-# mean_speed_limit = data.groupby('Accident_Severity')["Speed_limit"].mean().round(2)
-# plt.figure(figsize=(8, 6))
-# plt.bar(mean_speed_limit.index, mean_speed_limit)
-# plt.xlabel('Severity')
-# plt.ylabel('Mean Speed Limit')
-# plt.title('Speed_limit of each Severity')
-# plt.xticks(rotation=0)
-# for x, y in enumerate(mean_speed_limit):
-#     plt.text(x, y, str(y), ha='center', va='bottom')
-# # plt.show()
+# Mean speed limit of each severity
+mean_speed_limit = data.groupby('Accident_Severity')["Speed_limit"].mean().round(2)
+plt.figure(figsize=(8, 6))
+plt.bar(mean_speed_limit.index, mean_speed_limit)
+plt.xlabel('Severity')
+plt.ylabel('Mean Speed Limit')
+plt.title('Speed_limit of each Severity')
+plt.xticks(rotation=0)
+for x, y in enumerate(mean_speed_limit):
+    plt.text(x, y, str(y), ha='center', va='bottom')
+# plt.show()
 
-# # Junction Control grouped by accident severity
-# data.groupby('Accident_Severity')['Junction_Control'].value_counts().unstack().plot.bar(
-#     figsize=(22, 8),
-#     ylabel='Counts',
-#     width=.9
-# )
-# plt.title("Junction Control grouped by Accident Severity", fontsize = 22)
-# # plt.show()
+# Junction Control grouped by accident severity
+data.groupby('Accident_Severity')['Junction_Control'].value_counts().unstack().plot.bar(
+    figsize=(22, 8),
+    ylabel='Counts',
+    width=.9
+)
+plt.title("Junction Control grouped by Accident Severity", fontsize = 22)
+# plt.show()
 
-# # Weekly view with hours
-# data.groupby('Day_of_Week')['Time'].value_counts().unstack().plot.bar(
-#     figsize=(22, 8),
-#     ylabel='Counts',
-#     width=.9
-# )
-# plt.title("Accidents Weekly change in a view of hour", fontsize = 22)
-# # plt.show()
+# Weekly view with hours
+data.groupby('Day_of_Week')['Time'].value_counts().unstack().plot.bar(
+    figsize=(22, 8),
+    ylabel='Counts',
+    width=.9
+)
+plt.title("Accidents Weekly change in a view of hour", fontsize = 22)
+# plt.show()
 
 
-# # Light conditions grouped by accident severity
-# data.groupby('Accident_Severity')['Light_Conditions'].value_counts().unstack().plot.bar(
-#     figsize=(22, 8),
-#     ylabel='Counts',
-#     width=.9
-# )
-# plt.title("Light conditions grouped by Accident Severity", fontsize = 22)
-# # plt.show()
+# Light conditions grouped by accident severity
+data.groupby('Accident_Severity')['Light_Conditions'].value_counts().unstack().plot.bar(
+    figsize=(22, 8),
+    ylabel='Counts',
+    width=.9
+)
+plt.title("Light conditions grouped by Accident Severity", fontsize = 22)
+# plt.show()
 
-# # Age band of driver grouped by accident severity
-# data.groupby('Accident_Severity')['Age_Band_of_Driver'].value_counts().unstack().plot.bar(
-#     figsize=(22, 8),
-#     ylabel='Counts',
-#     width=.9
-# )
-# plt.title("Age Band of Driver grouped by Accident Severity", fontsize = 22)
-# # plt.show()
+# Age band of driver grouped by accident severity
+data.groupby('Accident_Severity')['Age_Band_of_Driver'].value_counts().unstack().plot.bar(
+    figsize=(22, 8),
+    ylabel='Counts',
+    width=.9
+)
+plt.title("Age Band of Driver grouped by Accident Severity", fontsize = 22)
+# plt.show()
 
-# # Propulsion grouped by accident severity
-# data.groupby('Accident_Severity')['Propulsion_Code'].value_counts().unstack().plot.bar(
-#     figsize=(22, 8),
-#     ylabel='Counts',
-#     width=.9
-# )
-# plt.title("Propulsion of Vehicle grouped by Accident Severity", fontsize = 22)
-# # plt.show()
+# Propulsion grouped by accident severity
+data.groupby('Accident_Severity')['Propulsion_Code'].value_counts().unstack().plot.bar(
+    figsize=(22, 8),
+    ylabel='Counts',
+    width=.9
+)
+plt.title("Propulsion of Vehicle grouped by Accident Severity", fontsize = 22)
+# plt.show()
 
-# # Vehicle Type grouped by accident severity
-# data.groupby('Accident_Severity')['Vehicle_Type'].value_counts().unstack().plot.bar(
-#     figsize=(22, 8),
-#     ylabel='Counts',
-#     width=.9
-# )
-# plt.title("Vehicle Type grouped by Accident Severity", fontsize = 22)
-# # plt.show()
+# Vehicle Type grouped by accident severity
+data.groupby('Accident_Severity')['Vehicle_Type'].value_counts().unstack().plot.bar(
+    figsize=(22, 8),
+    ylabel='Counts',
+    width=.9
+)
+plt.title("Vehicle Type grouped by Accident Severity", fontsize = 22)
+# plt.show()
