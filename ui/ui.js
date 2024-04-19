@@ -218,13 +218,7 @@ var points = [],
         geometry: function (feature) {
           var geom = feature.getGeometry();
           if (geom.getType() === "Circle") {
-            if (radius == 10) {
-              geom.setRadius(15);
-            } else if(radius == 30){
-              geom.setRadius(25);
-            } else {
-              geom.setRadius(20);
-            }
+            geom.setRadius(radius*3);
           }
           return geom;
         },
@@ -341,7 +335,7 @@ function plotData() {
 
 plotData();
 
-var zoomFunction = function (feature, resolution) {
+var zoomFunction = function () {
   var zoom = map.getView().getZoom();
   var scaleFactor = 1;
   if (zoom < 10) {
@@ -353,6 +347,17 @@ var zoomFunction = function (feature, resolution) {
   
   return [iconStyle];
 };
+
+var dist;
+function fetchCoordinatesData(data) {
+  for(let i=0; i<data.length; i++) {
+    for(let j=i+1; j<data.length; j++) {
+      dist = calculateDistance(data[i][0], data[i][1], data[j][0], data[j][1]);
+      if(dist <= 500) data.splice(j, 1);
+    }
+  }
+  return data;
+}
 
 map.on("click", function (evt) {
   utils.getNearest(evt.coordinate).then(function (coord_street) {
@@ -419,7 +424,9 @@ map.on("click", function (evt) {
         .then(
             function (json) {
               pathData = json.features[0].properties.segments[0].steps;
-              coordinatesData = json.features[0].geometry.coordinates;
+              console.log(json.features[0].geometry.coordinates.length);
+              coordinatesData = fetchCoordinatesData(json.features[0].geometry.coordinates);
+              console.log(coordinatesData.length);
               getWeatherData(point1_2, point1_1).then((data) => {
                 if (data) {
                   weatherData = data;
