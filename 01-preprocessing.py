@@ -1,17 +1,17 @@
 
 import pandas as pd
-# import tensorflow as tf
 
 # Data Visualization
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from sklearn.preprocessing import LabelEncoder
 
 accident_data = pd.read_csv('dataset/Accident_Information.csv')
 vehicle_data = pd.read_csv('dataset/Vehicle_Information.csv')
 
 # ---- Data Preprocessing - Accident Data ----
+
+print('\n---- DATA PREPROCESSING - ACCIDENT DATASET ----')
 
 accident_data.columns = accident_data.columns.str.strip()
 # print(accident_data.head())
@@ -79,7 +79,7 @@ missing_value_graph.set_title("Percentage Missing value of each feature", fontsi
 missing_value_graph.set_ylabel("Features")
 # plt.show()
 
-# print('\nMissing values %\n', count_missing_value_df.head(10))
+print('\nMissing values %\n', count_missing_value_df.head(10))
 
 # Drop columns with greater % of missing values
 missing_value_40_df = count_missing_value_df[count_missing_value_df['Missing%'] > 40]
@@ -88,23 +88,24 @@ accident_data.drop(missing_value_40_df.index, axis=1, inplace=True)
 fig, axes = plt.subplots(2, 2, figsize=(8, 6))
 
 # Imputation by max value count
-accident_data['Junction_Control'].replace(float("NaN"), "Give way or uncontrolled", inplace=True)
-accident_data['Junction_Control'].replace("Stop sign", "Give way or uncontrolled", inplace=True)
-accident_data['Junction_Control'].replace("Authorised person", "Give way or uncontrolled", inplace=True)
+accident_data['Junction_Control'] = accident_data['Junction_Control'].fillna(accident_data['Junction_Control'].mode()[0])
+accident_data['Junction_Control'].replace("Stop sign", "Give way or uncontrolled")
+accident_data['Junction_Control'].replace("Authorised person", "Give way or uncontrolled")
 jc_counts = accident_data['Junction_Control'].value_counts()
 axes[0,0].bar(jc_counts.index, jc_counts)
 axes[0,0].set_title('Junction Control')
 
+accident_data['Weather_Conditions'] = accident_data['Weather_Conditions'].fillna(accident_data['Weather_Conditions'].mode()[0])
 wc_counts = accident_data['Weather_Conditions'].value_counts()
 axes[0,1].bar(wc_counts.index, wc_counts)
 axes[0,1].set_title('Weather Conditions')
-accident_data['Weather_Conditions'].replace(float("NaN"), "fine", inplace=True)
+accident_data['Weather_Conditions'].replace(float("NaN"), "fine")
 
 accident_data['Junction_Detail'] = accident_data['Junction_Detail'].fillna(accident_data['Junction_Detail'].mode()[0])
-accident_data['Junction_Detail'].replace("Mini-roundabout", "Roundabout", inplace=True)
-accident_data['Junction_Detail'].replace("More than 4 arms (not roundabout)", "Crossroads", inplace=True)
-accident_data['Junction_Detail'].replace("Private drive or entrance", "Slip road", inplace=True)
-accident_data['Junction_Detail'].replace("T or staggered junction", "Crossroads", inplace=True)
+accident_data['Junction_Detail'].replace("Mini-roundabout", "Roundabout")
+accident_data['Junction_Detail'].replace("More than 4 arms (not roundabout)", "Crossroads")
+accident_data['Junction_Detail'].replace("Private drive or entrance", "Slip road")
+accident_data['Junction_Detail'].replace("T or staggered junction", "Crossroads")
 jd_counts = accident_data['Junction_Detail'].value_counts()
 axes[1,0].bar(jd_counts.index, jd_counts)
 axes[1,0].set_title('Junction Detail')
@@ -112,11 +113,11 @@ axes[1,0].set_title('Junction Detail')
 rsc_counts = accident_data['Road_Surface_Conditions'].value_counts()
 axes[1,1].bar(rsc_counts.index, rsc_counts)
 axes[1,1].set_title('Road Surface Conditions')
-accident_data['Road_Surface_Conditions'].replace(float("NaN"), "dry", inplace=True)
+accident_data['Road_Surface_Conditions'].replace(float("NaN"), "dry")
 
-accident_data['Road_Type'].replace("Unknown", "Single carriageway", inplace=True)
-accident_data['Road_Type'].replace("One way street", "Single carriageway", inplace=True)
-accident_data['Road_Type'].replace("Slip road", "Single carriageway", inplace=True)
+accident_data['Road_Type'].replace("Unknown", "Single carriageway")
+accident_data['Road_Type'].replace("One way street", "Single carriageway")
+accident_data['Road_Type'].replace("Slip road", "Single carriageway")
 rt_counts = accident_data['Road_Type'].value_counts()
 
 plt.tight_layout()
@@ -126,9 +127,12 @@ plt.tight_layout()
 accident_data['Latitude'] = accident_data['Latitude'].fillna(accident_data['Latitude'].mean())
 accident_data['Longitude'] = accident_data['Longitude'].fillna(accident_data['Longitude'].mean())
 
+diff_cols = ['Number_of_Casualties', 'Number_of_Vehicles']
+accident_data = accident_data.drop(diff_cols, axis=1)
+
 count_missing_value = accident_data.isna().sum() / accident_data.shape[0] * 100
 count_missing_value_df = pd.DataFrame(count_missing_value.sort_values(ascending=False), columns=['Missing%'])
-# print('\nMissing values %\n', count_missing_value_df.head(5))
+print('\nMissing values % - AFTER IMPUTATION\n', count_missing_value_df.head(5))
 
 # Datatype correcting
 accident_data['Time'] = pd.to_datetime(accident_data['Time'],format='%H:%M').dt.hour
@@ -136,6 +140,8 @@ accident_data['Time'] = pd.to_datetime(accident_data['Time'],format='%H:%M').dt.
 # accident_data.to_csv('pp-acc-data.csv')
 
 # ---- Data Preprocessing - Vehicle Data ----
+
+print('\n---- DATA PREPROCESSING - VEHICLE DATASET ----')
 
 vehicle_data.columns = vehicle_data.columns.str.strip()
 # print(vehicle_data.head())
@@ -187,7 +193,7 @@ missing_value_graph.set_title("Percentage Missing value of each feature", fontsi
 missing_value_graph.set_ylabel("Features")
 # plt.show()
 
-# print('\nMissing values %\n', count_missing_value_df.head(10))
+print('\nMissing values %\n', count_missing_value_df.head(10))
 
 # Drop columns with greater % of missing values
 missing_value_40_df = count_missing_value_df[count_missing_value_df['Missing%'] > 40]
@@ -214,50 +220,41 @@ fig, axes = plt.subplots(2, 2, figsize=(8, 6))
 
 # Imputation by max value count
 vehicle_data['Age_Band_of_Driver'] = vehicle_data['Age_Band_of_Driver'].fillna(vehicle_data['Age_Band_of_Driver'].mode()[0])
-vehicle_data['Age_Band_of_Driver'].replace("Nov-15", "26 - 35", inplace=True)
-vehicle_data['Age_Band_of_Driver'].replace("06-Oct", "26 - 35", inplace=True)
+vehicle_data['Age_Band_of_Driver'].replace("Nov-15", "26 - 35")
+vehicle_data['Age_Band_of_Driver'].replace("06-Oct", "26 - 35")
 aged_counts = vehicle_data['Age_Band_of_Driver'].value_counts()
 axes[1,0].bar(aged_counts.index, aged_counts)
 axes[1,0].set_title('Age_Band_of_Driver')
 
-vehicle_data['Junction_Location'].replace("Mid Junction - on roundabout or on main road", "At junction", inplace=True)
-vehicle_data['Junction_Location'].replace("Cleared junction or waiting/parked at junction exit", "At junction", inplace=True)
-vehicle_data['Junction_Location'].replace("Approaching junction or waiting/parked at junction approach", "Approaching junction", inplace=True)
-vehicle_data['Junction_Location'].replace("Entering main road", "At main road", inplace=True)
-vehicle_data['Junction_Location'].replace("Leaving main road", "At main road", inplace=True)
-vehicle_data['Junction_Location'].replace("Entering roundabout", "At roundabout", inplace=True)
-vehicle_data['Junction_Location'].replace("Leaving roundabout", "At roundabout", inplace=True)
-vehicle_data['Junction_Location'].replace("Entering from slip road", "At slip road", inplace=True)
+vehicle_data['Junction_Location'].replace("Mid Junction - on roundabout or on main road", "At junction")
+vehicle_data['Junction_Location'].replace("Cleared junction or waiting/parked at junction exit", "At junction")
+vehicle_data['Junction_Location'].replace("Approaching junction or waiting/parked at junction approach", "Approaching junction")
+vehicle_data['Junction_Location'].replace("Entering main road", "At main road")
+vehicle_data['Junction_Location'].replace("Leaving main road", "At main road")
+vehicle_data['Junction_Location'].replace("Entering roundabout", "At roundabout")
+vehicle_data['Junction_Location'].replace("Leaving roundabout", "At roundabout")
+vehicle_data['Junction_Location'].replace("Entering from slip road", "At slip road")
 
 
-vehicle_data['Vehicle_Manoeuvre'].replace("Going ahead other", "straight", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Parked", "goal", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Turning right", "right", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Going ahead right-hand bend", "sharp right", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Moving off", "depart", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Going ahead left-hand bend", "sharp left", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Changing lane to right", "slight right", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Reversing", "straight", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Slowing or stopping", "straight", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("U-turn", "u-turn", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Turning left", "left", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Overtaking moving vehicle - offside", "straight", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Waiting to go - held up", "straight", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Waiting to turn right", "keep right", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Overtaking - nearside", "straight", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Waiting to turn left", "keep left", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Overtaking static vehicle - offside", "straight", inplace=True)
-vehicle_data['Vehicle_Manoeuvre'].replace("Changing lane to left", "slight left", inplace=True)
+vehicle_data['Vehicle_Manoeuvre'].replace("Going ahead other", "straight")
+vehicle_data['Vehicle_Manoeuvre'].replace("Parked", "goal")
+vehicle_data['Vehicle_Manoeuvre'].replace("Turning right", "right")
+vehicle_data['Vehicle_Manoeuvre'].replace("Going ahead right-hand bend", "sharp right")
+vehicle_data['Vehicle_Manoeuvre'].replace("Moving off", "depart")
+vehicle_data['Vehicle_Manoeuvre'].replace("Going ahead left-hand bend", "sharp left")
+vehicle_data['Vehicle_Manoeuvre'].replace("Changing lane to right", "slight right")
+vehicle_data['Vehicle_Manoeuvre'].replace("Reversing", "straight")
+vehicle_data['Vehicle_Manoeuvre'].replace("Slowing or stopping", "straight")
+vehicle_data['Vehicle_Manoeuvre'].replace("U-turn", "u-turn")
+vehicle_data['Vehicle_Manoeuvre'].replace("Turning left", "left")
+vehicle_data['Vehicle_Manoeuvre'].replace("Overtaking moving vehicle - offside", "straight")
+vehicle_data['Vehicle_Manoeuvre'].replace("Waiting to go - held up", "straight")
+vehicle_data['Vehicle_Manoeuvre'].replace("Waiting to turn right", "keep right")
+vehicle_data['Vehicle_Manoeuvre'].replace("Overtaking - nearside", "straight")
+vehicle_data['Vehicle_Manoeuvre'].replace("Waiting to turn left", "keep left")
+vehicle_data['Vehicle_Manoeuvre'].replace("Overtaking static vehicle - offside", "straight")
+vehicle_data['Vehicle_Manoeuvre'].replace("Changing lane to left", "slight left")
 
-
-# jl_counts = vehicle_data['Junction_Location'].value_counts()
-# print(jl_counts)
-# print()
-# vm_counts = vehicle_data['Vehicle_Manoeuvre'].value_counts()
-# print(vm_counts)
-# print()
-# x1_counts = vehicle_data['X1st_Point_of_Impact'].value_counts()
-# print(x1_counts)
 
 plt.tight_layout()
 # plt.show()
@@ -267,36 +264,19 @@ vehicle_data = vehicle_data.drop(diff_cols, axis=1)
 
 count_missing_value = vehicle_data.isna().sum() / vehicle_data.shape[0] * 100
 count_missing_value_df = pd.DataFrame(count_missing_value.sort_values(ascending=False), columns=['Missing%'])
-# print('\nMissing values %\n', count_missing_value_df.head(5))
+print('\nMissing values - AFTER IMPUTATION\n', count_missing_value_df.head(5))
 
-print()
 unique_counts = vehicle_data.nunique()
 # print(unique_counts)
 
 # vehicle_data.to_csv('pp-vec-data.csv')
 
-# data = pd.merge(accident_data, vehicle_data, on='Accident_Index', how='inner')
-# data.to_csv('pp-data.csv')
 
-df = pd.read_csv('pp-data.csv')
-amb_cols = ['Number_of_Casualties','Number_of_Vehicles','Speed_limit','Unnamed: 0','Unnamed: 0_x','Unnamed: 0_y']
-final = df.drop(amb_cols, axis=1)
-# final.to_csv('final-pp-data.csv')
-
-# # Label Encoding
-# ad_label_encoding_features = ['Day_of_Week', 'Junction_Control', 'Junction_Detail', 'Light_Conditions', 'Road_Surface_Conditions', 'Road_Type', 'Urban_or_Rural_Area', 'Weather_Conditions']
-# for feature in ad_label_encoding_features:
-#     accident_data[feature] = LabelEncoder().fit_transform(accident_data[feature])
-
-# vd_label_encoding_features = ['Age_Band_of_Driver', 'Junction_Location', 'Sex_of_Driver', 'Vehicle_Manoeuvre', 'Vehicle_Type', 'X1st_Point_of_Impact']
-# for feature in vd_label_encoding_features:
-#     vehicle_data[feature] = LabelEncoder().fit_transform(vehicle_data[feature])
 
 # ---- Merge data - Accident Data + Vehicle Data ----
 
 # data = pd.merge(accident_data, vehicle_data, on='Accident_Index', how='inner')
-# data.to_csv('pp-data-encoded.csv')
-
+# data.to_csv('pp-data.csv')
 
 
 
@@ -316,17 +296,6 @@ legend_labels = [f'{label} ({percentage:.2f}%)' for label, percentage in zip(sev
 plt.legend(legend_labels, title='Severity', loc='upper right')
 # plt.show()
 
-# Mean speed limit of each severity
-mean_speed_limit = data.groupby('Accident_Severity')["Speed_limit"].mean().round(2)
-plt.figure(figsize=(8, 6))
-plt.bar(mean_speed_limit.index, mean_speed_limit)
-plt.xlabel('Severity')
-plt.ylabel('Mean Speed Limit')
-plt.title('Speed_limit of each Severity')
-plt.xticks(rotation=0)
-for x, y in enumerate(mean_speed_limit):
-    plt.text(x, y, str(y), ha='center', va='bottom')
-# plt.show()
 
 # Junction Control grouped by accident severity
 data.groupby('Accident_Severity')['Junction_Control'].value_counts().unstack().plot.bar(
@@ -365,14 +334,6 @@ data.groupby('Accident_Severity')['Age_Band_of_Driver'].value_counts().unstack()
 plt.title("Age Band of Driver grouped by Accident Severity", fontsize = 22)
 # plt.show()
 
-# Propulsion grouped by accident severity
-data.groupby('Accident_Severity')['Propulsion_Code'].value_counts().unstack().plot.bar(
-    figsize=(22, 8),
-    ylabel='Counts',
-    width=.9
-)
-plt.title("Propulsion of Vehicle grouped by Accident Severity", fontsize = 22)
-# plt.show()
 
 # Vehicle Type grouped by accident severity
 data.groupby('Accident_Severity')['Vehicle_Type'].value_counts().unstack().plot.bar(
@@ -381,4 +342,4 @@ data.groupby('Accident_Severity')['Vehicle_Type'].value_counts().unstack().plot.
     width=.9
 )
 plt.title("Vehicle Type grouped by Accident Severity", fontsize = 22)
-# plt.show()
+plt.show()

@@ -45,16 +45,11 @@ y_train_nn = label_encoder.fit_transform(y_train)
 y_test_nn = label_encoder.fit_transform(y_test)
 y_train_ann = utils.to_categorical(y_train_nn, num_classes)
 y_test_ann = utils.to_categorical(y_test_nn, num_classes)
-# X_test = X_test.reshape(-1, 50, 1)
-# X_train = X_train.reshape(-1, 50, 1)
 
 def as_masks(arr):
     n_classes = arr.max()+1
     one_hot = np.eye(n_classes)[arr]
     return [m == 1 for m in one_hot.T]
-
-# num_classes = 3
-
 
 def disp_conf_matrix(cm, class_names = className):
     cm = cm.astype(np.float32) / cm.sum(axis=1)[:, None]
@@ -84,25 +79,24 @@ model = Sequential([
           Dense(3, activation = 'softmax')
           ])
 
-# # # Train the cnn model (on GPU)
-# # opt = Adam(learning_rate=0.0001)
-# # with tf.device('/device:GPU:0'):
-# #     model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer=opt)
-# #     history_cnn = model.fit(X_train, y_train_ann, epochs=40, validation_split = 0.15, batch_size=100, verbose=1)
+# # Train the cnn model (on GPU)
+# opt = Adam(learning_rate=0.0001)
+# with tf.device('/device:GPU:0'):
+#     model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer=opt)
+#     history_cnn = model.fit(X_train, y_train_ann, epochs=40, validation_split = 0.15, batch_size=100, verbose=1)
 
-# # !!! RUN THIS CODE AGAIN !!!
 
-# # model.save('cnn_model')
+# model.save('cnn_model')
 cnn_model = keras.models.load_model('cnn_model')
 
-# # #PLot training and validation losses
-# # plt.plot(history_cnn.history['loss'])
-# # plt.plot(history_cnn.history['val_loss'])
-# # plt.title('Losses for CNN model')
-# # plt.ylabel('Losses')
-# # plt.xlabel('Epoch')
-# # plt.legend(['training loss', 'validation loss'], loc='upper right')
-# # plt.show()
+# #PLot training and validation losses
+# plt.plot(history_cnn.history['loss'])
+# plt.plot(history_cnn.history['val_loss'])
+# plt.title('Losses for CNN model')
+# plt.ylabel('Losses')
+# plt.xlabel('Epoch')
+# plt.legend(['training loss', 'validation loss'], loc='upper right')
+# plt.show()
 
 # Evaluate the CNN model
 ypred = cnn_model.predict(X_test)
@@ -126,7 +120,7 @@ model = Sequential([
 #     history_lstm= model.fit(X_train, y_train_ann, epochs=20, validation_split = 0.15, batch_size=100, verbose=1)
 
 # model.save('lstm_model')
-# lstm_model = keras.models.load_model('lstm_model')
+lstm_model = keras.models.load_model('lstm_model')
 
 # #PLot training and validation losses
 # plt.plot(history_lstm.history['loss'])
@@ -137,36 +131,36 @@ model = Sequential([
 # plt.legend(['training loss', 'validation loss'], loc='upper right')
 # plt.show()
 
-# # Evaluate the lstm model
-# ypred = model.predict(X_test)
-# perf_lstm = perf_m(y_test, np.argmax(ypred, axis=1), 'LSTM')
-# print(perf_lstm)
+# Evaluate the lstm model
+ypred = model.predict(X_test)
+perf_lstm = perf_m(y_test, np.argmax(ypred, axis=1), 'LSTM')
+print(perf_lstm)
 
 
-# #RNN Model
-# model = Sequential([
-#           SimpleRNN(32, input_shape=(None, 1)),
-#           Dropout(0.2),
-#           Dense(32, activation='relu'),
-#           Dense(3, activation = 'softmax')
-#           ])
+#RNN Model
+model = Sequential([
+          SimpleRNN(32, input_shape=(None, 1)),
+          Dropout(0.2),
+          Dense(32, activation='relu'),
+          Dense(3, activation = 'softmax')
+          ])
 
-# # opt = Adam(learning_rate=0.0001)
-# # with tf.device('/device:GPU:0'):
-# #     model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer=opt)
-# #     history_rnn = model.fit(X_train, y_train_ann, epochs=40, validation_split = 0.15, batch_size=100, verbose=1)
+# opt = Adam(learning_rate=0.0001)
+# with tf.device('/device:GPU:0'):
+#     model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer=opt)
+#     history_rnn = model.fit(X_train, y_train_ann, epochs=40, validation_split = 0.15, batch_size=100, verbose=1)
 
-# # model.save('rnn_model')
+# model.save('rnn_model')
 rnn_model = keras.models.load_model('rnn_model')
 
-# # #Plot training and validation losses
-# # plt.plot(history_rnn.history['loss'])
-# # plt.plot(history_rnn.history['val_loss'])
-# # plt.title('Losses for RNN model')
-# # plt.ylabel('Losses')
-# # plt.xlabel('Epoch')
-# # plt.legend(['training loss', 'validation loss'], loc='upper right')
-# # plt.show()
+# #Plot training and validation losses
+# plt.plot(history_rnn.history['loss'])
+# plt.plot(history_rnn.history['val_loss'])
+# plt.title('Losses for RNN model')
+# plt.ylabel('Losses')
+# plt.xlabel('Epoch')
+# plt.legend(['training loss', 'validation loss'], loc='upper right')
+# plt.show()
 
 # Evaluate the RNN model
 ypred = rnn_model.predict(X_test)
